@@ -80,3 +80,5 @@ obj/Debug/net5.0/Rocky.assets.cache
 obj/Debug/net5.0/Rocky.csprojAssemblyReference.cache
 obj/Rocky.csproj.nuget.g.props
 Rocky
+Rocky-shm
+Rocky-wal

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Rocky.Data;
 using Rocky.Models;
@@ -32,7 +33,14 @@ namespace Rocky.Controllers
 
 
         public IActionResult Upsert(int? id)
-        {      Product product=new Product();
+        {   IEnumerable<SelectListItem>CategoryDropDown=_db.Category.Select(i=>new SelectListItem{
+            Text=i.Name,
+            Value=i.Id.ToString()
+            });
+            
+            ViewBag.CategoryDropDown=CategoryDropDown;
+
+            Product product=new Product();
             if (id==null)
            { return View(product);}
            else{

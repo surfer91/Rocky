@@ -3,7 +3,7 @@
 var title="Create Product";
 }
 
-<form method="post" enctype="multipart/form-data" asp-action="Edit">
+<form method="post" enctype="multipart/form-data">
 @if (Model.Product.Id!=0){ 
     title="Edit Product";
     <input asp-for="Product.Id" hidden />}
@@ -51,7 +51,7 @@ var title="Create Product";
                       Image
                     </div>
                     <div class="col-8">
-                       <input type="file" Product.Name="files" id="uploadBox" multiple class="form-control"/>
+                       <input type="file" name="files" id="uploadBox" multiple class="form-control"/>
                      
  </div>
  </div>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -15,9 +17,11 @@ namespace Rocky.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _db;
-        public ProductController(ApplicationDbContext db)
+        public readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
+            _webHostEnvironment=webHostEnvironment;
         }
 
 
@@ -69,12 +73,32 @@ namespace Rocky.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Category obj)
+        public IActionResult Upsert(ProductVM productVM)
         {   if (ModelState.IsValid){
-            _db.Category.Add(obj);
-            _db.SaveChanges();
-            return RedirectToAction("Index");}
-             return View(obj);  
+          var files=HttpContext.Request.Form.Files;
+          string webRootPath=_webHostEnvironment.WebRootPath;
+          if(productVM.Product.Id==0){
+                string upload=webRootPath+WC.ImagePath;
+                string fileName=Guid.NewGuid().ToString();
+                string extension=Path.GetExtension(files[0].FileName);
+                using(var fileStream=new FileStream(Path.Combine(upload,fileName+extension),FileMode.Create)){
+                            files[0].CopyTo(fileStream);
+                }
+
+                productVM.Product.Image=fileName+extension;
+                _db.Product.Add(productVM.Product);
+
+          }
+          else{
+
+
+          }
+
+          _db.SaveChanges();
+          return RedirectToAction("Index");
+          
+          }
+             return View();  
         }
 
            public IActionResult Edit(int? id)

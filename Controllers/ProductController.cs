@@ -32,6 +32,8 @@ namespace Rocky.Controllers
             foreach (var obj in objList)
             {
                 obj.Category=_db.Category.FirstOrDefault(u=>u.Id==obj.CategoryId);
+                 obj.ApplicationType=_db.ApplicationType.FirstOrDefault(u=>u.Id==obj.ApplicationTypeId);
+
             }
 
             return View(objList);
@@ -54,7 +56,14 @@ namespace Rocky.Controllers
                 CategorySelectList=_db.Category.Select(i=>new SelectListItem{
              Text=i.Name,
              Value=i.Id.ToString()
+             }),
+
+                ApplicationTypeSelectList=_db.ApplicationType.Select(i=>new SelectListItem{
+             Text=i.Name,
+             Value=i.Id.ToString()
              })
+
+
              };
 
             
@@ -128,6 +137,10 @@ productVM.Product.Image=fileName+extension;
              Text=i.Name,
              Value=i.Id.ToString()
              });
+                    productVM.ApplicationTypeSelectList=_db.ApplicationType.Select(i=>new SelectListItem{
+             Text=i.Name,
+             Value=i.Id.ToString()
+             });
              return View();  
         }
   
@@ -137,7 +150,7 @@ productVM.Product.Image=fileName+extension;
 //get-delete
            public IActionResult Delete(int? id)
         {   if (id==null||id==0){ return NotFound();}
-        Product product =_db.Product.Include(u=>u.Category).FirstOrDefault(u=>u.Id==id);
+        Product product =_db.Product.Include(u=>u.Category).Include(u=>u.ApplicationType).FirstOrDefault(u=>u.Id==id);
         // product.Category=_db.Category.Find(product.CategoryId);
          
             if(product==null){

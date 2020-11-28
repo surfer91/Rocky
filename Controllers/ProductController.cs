@@ -123,6 +123,11 @@ productVM.Product.Image=fileName+extension;
           return RedirectToAction("Index");
           
           }
+
+                productVM.CategorySelectList=_db.Category.Select(i=>new SelectListItem{
+             Text=i.Name,
+             Value=i.Id.ToString()
+             });
              return View();  
         }
 

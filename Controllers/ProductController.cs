@@ -130,45 +130,36 @@ productVM.Product.Image=fileName+extension;
              });
              return View();  
         }
+  
 
-           public IActionResult Edit(int? id)
-        {   if (id==null||id==0){ return NotFound();}
-            var obj=_db.Category.Find(id);
-            if(obj==null){
-                return NotFound();
-            }
-            return View(obj);
-        }   
+  
 
-
-      [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category obj)
-        {   if (ModelState.IsValid){
-            _db.Category.Update(obj);
-            _db.SaveChanges();
-            return RedirectToAction("Index");}
-             return View(obj);  
-        }
-
-
+//get-delete
            public IActionResult Delete(int? id)
         {   if (id==null||id==0){ return NotFound();}
-            var obj=_db.Category.Find(id);
-            if(obj==null){
+        Product product =_db.Product.Include(u=>u.Category).FirstOrDefault(u=>u.Id==id);
+        // product.Category=_db.Category.Find(product.CategoryId);
+         
+            if(product==null){
                 return NotFound();
             }
-            return View(obj);
+            return View(product);
         }   
 
-
-      [HttpPost]
+//post-delete
+      [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {  
-            var obj=_db.Category.Find(id);
-           
-            _db.Category.Remove(obj);
+            var obj=_db.Product.Find(id);
+                 string upload=_webHostEnvironment.WebRootPath+WC.ImagePath;
+                 var oldFile=Path.Combine(upload,obj.Image);
+
+                if(System.IO.File.Exists(oldFile)){
+                    System.IO.File.Delete(oldFile);
+                }
+
+            _db.Product.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");}
            

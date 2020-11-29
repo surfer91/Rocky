@@ -28,7 +28,7 @@ namespace Rocky.Controllers
                 Categories=_db.Category
 
         };
-            return View();
+            return View(homeVM);
         }
 
         public IActionResult Privacy()

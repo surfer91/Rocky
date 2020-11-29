@@ -26,6 +26,8 @@ namespace Rocky
         public void ConfigureServices(IServiceCollection services)
         {    services.AddDbContext<ApplicationDbContext>(options=>
         options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+        
+        services.AddDistributedMemoryCache();
                 services.AddHttpContextAccessor();
                 services.AddSession(Options=>{
 Options.IdleTimeout=TimeSpan.FromMinutes(10);

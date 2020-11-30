@@ -27,7 +27,7 @@ namespace Rocky
         public void ConfigureServices(IServiceCollection services)
         {    services.AddDbContext<ApplicationDbContext>(options=>
         options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-        services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+        services.AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
         
         services.AddDistributedMemoryCache();
                 services.AddHttpContextAccessor();

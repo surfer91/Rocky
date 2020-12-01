@@ -72,8 +72,25 @@ namespace Rocky.Controllers
             ProductList=prodList
         };
 
+         return RedirectToAction(nameof(InquiryConfirmation));
+        }
+[HttpPost]
+[ActionName("Summary")]
+                  public IActionResult SummaryPost(ProductUserVM productUserVM)
+        {  
+
          return View(ProductUserVM);
         }
+        
+        [HttpPost]
+[ActionName("Summary")]
+                  public IActionResult InquiryConfirmation()
+        {  
+            HttpContext.Session.Clear();
+         return View();
+        }
+        
+
 
         public IActionResult Remove(int id)
         { List<ShoppingCart> shoppingCartList=new List<ShoppingCart>();

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rocky.Data;
 using Rocky.Models;
 
 namespace Rocky.Controllers
-{
+{ [Authorize(Roles=WC.AdminRole)]
+
     public class ApplicationTypeController : Controller
     {
         private readonly ApplicationDbContext _db;

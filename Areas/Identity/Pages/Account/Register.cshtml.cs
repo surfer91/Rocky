@@ -115,10 +115,12 @@ await _roleManager.CreateAsync(new IdentityRole(WC.CustomerRole));
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                    { if (User.IsInRole(WC.AdminRole)){
+                        await _signInManager.SignInAsync(user, isPersistent: false);}
+                        else{ return RedirectToAction("Index");}
+                         return LocalRedirect(returnUrl);
                     }
+                   
                 }
                 foreach (var error in result.Errors)
                 {

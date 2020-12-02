@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,12 +24,19 @@ namespace Rocky.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
+
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+          private readonly IEmailSender _emailSender;
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
 
-        public CartController(ILogger<HomeController> logger,ApplicationDbContext db)
+        public CartController(ILogger<HomeController> logger,ApplicationDbContext db,IWebHostEnvironment webHostEnvironment,
+         IEmailSender emailSender)
         {   _db=db;
             _logger = logger;
+            _webHostEnvironment=webHostEnvironment;
+         _emailSender=emailSender;
         }
 
         public IActionResult Index()
@@ -72,14 +83,32 @@ namespace Rocky.Controllers
             ProductList=prodList.ToList()
         };
 
-         return RedirectToAction(nameof(InquiryConfirmation));
+         return View(ProductUserVM);
         }
 [HttpPost]
 [ActionName("Summary")]
-                  public IActionResult SummaryPost(ProductUserVM productUserVM)
-        {  
+                  public async Task<IActionResult> SummaryPost(ProductUserVM productUserVM)
+        {  var PathToTemplate=_webHostEnvironment.WebRootPath+Path.DirectorySeparatorChar.ToString()+"templates"+
+        Path.DirectorySeparatorChar.ToString()+"Inquiry.html";
 
-         return View(ProductUserVM);
+    var subject="New Inquiry";
+        string HtmlBody="";
+        using (StreamReader sr=System.IO.File.OpenText(PathToTemplate) ){
+            HtmlBody=sr.ReadToEnd();
+        }
+
+StringBuilder productListSB=new StringBuilder();
+foreach (var prod in ProductUserVM.ProductList)
+{
+    productListSB.Append($" - Name:{prod.Name} <span style='font-size:14px;'> (ID:{prod.Id})</span><br />");
+}
+
+string messageBody=string.Format(HtmlBody,ProductUserVM.ApplicationUser.FullName,ProductUserVM.ApplicationUser.Email,
+ProductUserVM.ApplicationUser.PhoneNumber,productListSB.ToString());
+
+await _emailSender.SendEmailAsync(WC.EmailAdmin,subject,messageBody);
+
+         return RedirectToAction(nameof(InquiryConfirmation));
         }
         
         [HttpPost]
